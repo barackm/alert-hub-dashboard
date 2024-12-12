@@ -5,6 +5,7 @@ import { SidebarInset, SidebarProvider } from "./ui/sidebar";
 import AppHeader from "./app-header";
 import { usePathname } from "next/navigation";
 import { AuthProvider } from "./auth/auth-provider";
+import { cn } from "@/lib/utils";
 
 const AppWrapper = (props: PropsWithChildren) => {
   const pathname = usePathname();
@@ -18,7 +19,12 @@ const AppWrapper = (props: PropsWithChildren) => {
         {shouldShowSidebar && <AppSidebar />}
         <SidebarInset>
           {shouldShowSidebar && <AppHeader />}
-          <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+          <div
+            className={cn(
+              "flex flex-1 flex-col gap-4 p-4 pt-0",
+              shouldShowSidebar ? "pt-4" : "pt-0"
+            )}
+          >
             {props.children}
           </div>
         </SidebarInset>

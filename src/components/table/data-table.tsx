@@ -15,7 +15,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { DataTableToolbar } from "./data-table-toolbar";
+import { DataTableToolbar, FacetedFilter } from "./data-table-toolbar";
 import {
   Table,
   TableBody,
@@ -26,7 +26,7 @@ import {
 } from "../ui/table";
 import { DataTablePagination } from "./data-table-pagination";
 
-export interface DataTableConfig<TData> {
+export interface DataTableConfig {
   enableRowSelection?: boolean;
   enableSorting?: boolean;
   enableFiltering?: boolean;
@@ -38,12 +38,13 @@ export interface DataTableConfig<TData> {
   emptyState?: React.ReactNode;
   isLoading?: boolean;
   loadingState?: React.ReactNode;
+  facetedFilters?: FacetedFilter[];
 }
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  config?: DataTableConfig<TData>;
+  config?: DataTableConfig;
 }
 
 export function DataTable<TData, TValue>({
@@ -62,6 +63,7 @@ export function DataTable<TData, TValue>({
     emptyState,
     isLoading,
     loadingState,
+    facetedFilters,
   } = config;
 
   const [rowSelection, setRowSelection] = React.useState({});
@@ -72,7 +74,7 @@ export function DataTable<TData, TValue>({
   );
   const [sorting, setSorting] = React.useState<SortingState>([]);
 
-  const table = useReactTable({
+  const table = useReactTable<TData>({
     data,
     columns,
     state: {
@@ -105,6 +107,7 @@ export function DataTable<TData, TValue>({
           table={table}
           searchColumn={searchColumn}
           searchPlaceholder={searchPlaceholder}
+          facetedFilters={facetedFilters}
         />
       )}
       <div className="rounded-md border">

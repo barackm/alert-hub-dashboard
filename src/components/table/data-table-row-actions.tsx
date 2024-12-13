@@ -13,7 +13,7 @@ import {
 
 interface Action {
   label: string;
-  onClick: (row: any) => void;
+  onClick: (row: never) => void;
   shortcut?: string;
   separator?: boolean;
 }
@@ -43,7 +43,7 @@ export function DataTableRowActions<TData>({
           <>
             <DropdownMenuItem
               key={action.label}
-              onClick={() => action.onClick(row.original)}
+              onClick={() => action.onClick(row.original as never)}
             >
               {action.label}
               {action.shortcut && (

@@ -13,7 +13,7 @@ interface FilterOption {
   icon?: React.ComponentType<{ className?: string }>;
 }
 
-interface FacetedFilter {
+export interface FacetedFilter {
   column: string;
   title: string;
   options: FilterOption[];

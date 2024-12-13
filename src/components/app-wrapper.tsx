@@ -22,7 +22,7 @@ const AppWrapper = (props: PropsWithChildren) => {
           <div
             className={cn(
               "flex flex-1 flex-col gap-4 p-4 pt-0",
-              shouldShowSidebar ? "pt-4" : "pt-0"
+              shouldShowSidebar ? "pt-10" : "pt-0"
             )}
           >
             {props.children}

@@ -25,6 +25,7 @@ interface DataTableToolbarProps<TData> {
   searchPlaceholder?: string;
   facetedFilters?: FacetedFilter[];
   showViewOptions?: boolean;
+  renderAdditionalActions?: (table: Table<TData>) => React.ReactNode;
 }
 
 export function DataTableToolbar<TData>({
@@ -33,6 +34,7 @@ export function DataTableToolbar<TData>({
   searchPlaceholder = "Search...",
   facetedFilters = [],
   showViewOptions = true,
+  renderAdditionalActions,
 }: DataTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0;
 
@@ -77,6 +79,7 @@ export function DataTableToolbar<TData>({
           </Button>
         )}
       </div>
+      {renderAdditionalActions && renderAdditionalActions(table)}
       {showViewOptions && <DataTableViewOptions table={table} />}
     </div>
   );

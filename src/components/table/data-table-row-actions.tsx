@@ -11,16 +11,16 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-interface Action {
+export interface Action<TData = unknown> {
   label: string;
-  onClick: (row: never) => void;
+  onClick: (row: TData) => void;
   shortcut?: string;
   separator?: boolean;
 }
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
-  actions: Action[];
+  actions: Action<TData>[];
 }
 
 export function DataTableRowActions<TData>({

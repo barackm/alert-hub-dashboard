@@ -69,9 +69,9 @@ export function CommunityAgentDialog() {
 
   const handleSubmit = async (values: CommunityAgentFormValues) => {
     if (selectedAgent) {
-      await updateAgent(selectedAgent.id, values);
+      await updateAgent(selectedAgent.id, values as any);
     } else {
-      await createAgent(values);
+      await createAgent(values as any);
     }
     form.reset();
     closeDialog();

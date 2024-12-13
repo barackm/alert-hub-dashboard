@@ -1,6 +1,6 @@
 "use client";
 import { createContext, useContext, useEffect, useState } from "react";
-import { createClient } from "@/utils/supabase/client";
+import { supabase } from "@/utils/supabase/client";
 import { Session } from "@supabase/supabase-js";
 import { User, LoginData, RegisterData } from "@/types/auth";
 
@@ -24,9 +24,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const supabase = createClient();
 
-  console.log({ session });
   useEffect(() => {
     const {
       data: { subscription },

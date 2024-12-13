@@ -5,6 +5,7 @@ import {
   CommunityAgentFormValues,
 } from "@/types/community-agents";
 import { sampleData } from "./sample-data";
+import { supabase } from "@/utils/supabase/client";
 
 interface CommunityAgentsState {
   agents: CommunityAgent[];
@@ -40,15 +41,18 @@ export const useCommunityAgents = create<CommunityAgentsState>((set) => ({
 
   createAgent: async (data) => {
     try {
-      set({ isLoading: true });
-      const newAgent = {
-        ...data,
-        id: Date.now(),
-        created_at: new Date().toISOString(),
-      };
-      set((state) => ({ agents: [...state.agents, newAgent] }));
-    } catch {
-      set({ error: "Failed to create agent" });
+      set({ isLoading: true, error: null });
+      const { data: newAgent, error } = await supabase
+        .from("community_agents")
+        .insert([data])
+        .select()
+        .single();
+
+      if (error) throw error;
+      set((state) => ({ agents: [newAgent, ...state.agents] }));
+    } catch (error: any) {
+      set({ error: `Failed to create agent: ${error.message}` });
+      throw error;
     } finally {
       set({ isLoading: false });
     }
@@ -56,14 +60,23 @@ export const useCommunityAgents = create<CommunityAgentsState>((set) => ({
 
   updateAgent: async (id, data) => {
     try {
-      set({ isLoading: true });
+      set({ isLoading: true, error: null });
+      const { data: updatedAgent, error } = await supabase
+        .from("community_agents")
+        .update(data)
+        .eq("id", id)
+        .select()
+        .single();
+
+      if (error) throw error;
       set((state) => ({
         agents: state.agents.map((agent) =>
-          agent.id === id ? { ...agent, ...data } : agent
+          agent.id === id ? updatedAgent : agent
         ),
       }));
-    } catch {
-      set({ error: "Failed to update agent" });
+    } catch (error: any) {
+      set({ error: `Failed to update agent: ${error.message}` });
+      throw error;
     } finally {
       set({ isLoading: false });
     }
@@ -71,16 +84,19 @@ export const useCommunityAgents = create<CommunityAgentsState>((set) => ({
 
   deleteAgent: async (id) => {
     try {
-      set({ isLoading: true });
+      set({ isLoading: true, error: null });
+      const { error } = await supabase
+        .from("community_agents")
+        .delete()
+        .eq("id", id);
+
+      if (error) throw error;
       set((state) => ({
         agents: state.agents.filter((agent) => agent.id !== id),
       }));
     } catch (error) {
-      set({
-        error: `Failed to delete agent: ${
-          error instanceof Error ? error.message : String(error)
-        }`,
-      });
+      set({ error: `Failed to delete agent: ${error.message}` });
+      throw error;
     } finally {
       set({ isLoading: false });
     }

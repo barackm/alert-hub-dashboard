@@ -26,7 +26,7 @@ const data = {
   navMain: [
     {
       title: "Dashboard",
-      url: "#",
+      url: "/",
       icon: SquareTerminal,
       isActive: true,
     },
@@ -37,12 +37,12 @@ const data = {
     },
     {
       title: "Users",
-      url: "#",
+      url: "/users",
       icon: Bot,
     },
     {
       title: "Community Members",
-      url: "#",
+      url: "/community-members",
       icon: BookOpen,
     },
   ],

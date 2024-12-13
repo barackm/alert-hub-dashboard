@@ -82,18 +82,6 @@ export const columns: ColumnDef<Alert>[] = [
     header: "Province",
   },
   {
-    accessorKey: "district",
-    header: "District",
-  },
-  {
-    accessorKey: "sector",
-    header: "Sector",
-  },
-  {
-    accessorKey: "cell",
-    header: "Cell",
-  },
-  {
     accessorKey: "village",
     header: "Village",
   },
@@ -148,7 +136,6 @@ export const sampleData: Alert[] = [
     reporter_phone: "0780083122",
     updated_at: "2024-11-24 21:50:18.748217",
   },
-  // Continue pattern for remaining rows...
   {
     id: 22,
     created_at: "2024-11-27 20:20:56.137877+00",

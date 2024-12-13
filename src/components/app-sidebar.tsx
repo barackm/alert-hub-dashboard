@@ -41,8 +41,8 @@ const data = {
       icon: Bot,
     },
     {
-      title: "Community Members",
-      url: "/community-members",
+      title: "Community Agents",
+      url: "/community-agents",
       icon: BookOpen,
     },
   ],

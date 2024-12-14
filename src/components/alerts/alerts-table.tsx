@@ -6,9 +6,10 @@ import { getAlerts } from "./actions";
 import { Alert } from "@/types/alerts";
 
 export default function AlertsTable() {
-  const { data = [] } = useSWR<Alert[]>("/alerts", () => getAlerts());
-  const alerts = data;
-  console.log({ alerts });
+  const { data = [], isLoading } = useSWR<Alert[]>("/alerts", () =>
+    getAlerts()
+  );
+  const alerts = data || [];
 
   const config: DataTableConfig = {
     enableRowSelection: true,
@@ -37,11 +38,12 @@ export default function AlertsTable() {
       },
     ],
     showToolbar: true,
+    isLoading: isLoading,
   };
 
   return (
     <div className="container mx-auto">
-      <DataTable columns={columns} data={[]} config={config} />
+      <DataTable columns={columns} data={alerts} config={config} />
     </div>
   );
 }

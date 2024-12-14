@@ -1,3 +1,4 @@
+"use client";
 import { Row } from "@tanstack/react-table";
 import { useState } from "react";
 import { DataTableRowActions } from "@/components/table/data-table-row-actions";

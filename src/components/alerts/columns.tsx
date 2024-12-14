@@ -65,7 +65,7 @@ export const columns: ColumnDef<Alert>[] = [
     header: "Status",
     cell: ({ row }) => {
       const status = row.getValue("status") as keyof typeof statusConfig;
-      const config = statusConfig[status];
+      const config = statusConfig[status] || statusConfig.PENDING;
 
       return (
         <Badge
@@ -92,69 +92,5 @@ export const columns: ColumnDef<Alert>[] = [
   {
     id: "actions",
     cell: ({ row }) => <AlertActionsCell row={row} />,
-  },
-];
-
-export const sampleData: Alert[] = [
-  {
-    id: 7,
-    created_at: "2024-11-24 21:49:13.041041+00",
-    incident_type: "Human Disease",
-    province: "Kigali",
-    district: "Gasabo",
-    sector: "Bumbogo",
-    cell: "Kinyaga",
-    village: "Akakaza",
-    identifier: "494864",
-    affected_count: "1-5 Individuals",
-    details: JSON.stringify({
-      age: "FreeText",
-      duration: "FreeText",
-      affected_count: "1-5 Individuals",
-    }),
-    status: "PENDING",
-    reporter_phone: "0780083122",
-    updated_at: "2024-11-24 21:49:13.041041",
-  },
-  {
-    id: 8,
-    created_at: "2024-11-24 21:50:18.748217+00",
-    incident_type: "Human Disease",
-    province: "Kigali",
-    district: "Gasabo",
-    sector: "Bumbogo",
-    cell: "Kinyaga",
-    village: "Akakaza",
-    identifier: "973336",
-    affected_count: "1-5 Individuals",
-    details: JSON.stringify({
-      age: "FreeText",
-      duration: "FreeText",
-      affected_count: "1-5 Individuals",
-    }),
-    status: "PENDING",
-    reporter_phone: "0780083122",
-    updated_at: "2024-11-24 21:50:18.748217",
-  },
-  {
-    id: 22,
-    created_at: "2024-11-27 20:20:56.137877+00",
-    incident_type: "Human Disease",
-    province: "Kigali",
-    district: "Gasabo",
-    sector: "Gikomero",
-    cell: "Gicaca",
-    village: "Ntaganzwa",
-    identifier: "318258",
-    affected_count: "1-5 Individuals",
-    details: JSON.stringify({
-      age: "56",
-      gender: "Male",
-      duration: "4 days",
-      affected_count: "1-5 Individuals",
-    }),
-    status: "PENDING",
-    reporter_phone: "+250 780 083 122",
-    updated_at: "2024-11-27 20:20:56.137877",
   },
 ];

@@ -25,6 +25,7 @@ import {
   TableRow,
 } from "../ui/table";
 import { DataTablePagination } from "./data-table-pagination";
+import { Loader2 } from "lucide-react";
 
 export interface DataTableConfig {
   enableRowSelection?: boolean;
@@ -62,7 +63,6 @@ export function DataTable<TData, TValue>({
     searchPlaceholder,
     emptyState,
     isLoading,
-    loadingState,
     facetedFilters,
   } = config;
 
@@ -96,10 +96,6 @@ export function DataTable<TData, TValue>({
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
 
-  if (isLoading) {
-    return loadingState || <div>Loading...</div>;
-  }
-
   return (
     <div className="space-y-4">
       {showToolbar && (
@@ -129,29 +125,42 @@ export function DataTable<TData, TValue>({
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
+            {!isLoading && (
+              <>
+                {table.getRowModel().rows?.length ? (
+                  table.getRowModel().rows.map((row) => (
+                    <TableRow
+                      key={row.id}
+                      data-state={row.getIsSelected() && "selected"}
+                    >
+                      {row.getVisibleCells().map((cell) => (
+                        <TableCell key={cell.id}>
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell
+                      colSpan={columns.length}
+                      className="h-24 text-center"
+                    >
+                      {emptyState || "No results."}
                     </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
+                  </TableRow>
+                )}
+              </>
+            )}
+            {isLoading && (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  {emptyState || "No results."}
+                <TableCell colSpan={columns.length} className="h-24">
+                  <div className="flex items-center justify-center">
+                    <Loader2 className="h-6 w-6 animate-spin" />
+                  </div>
                 </TableCell>
               </TableRow>
             )}

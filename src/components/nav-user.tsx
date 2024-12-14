@@ -25,11 +25,12 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { useAuth } from "./auth/auth-provider";
+import { logoutAsync } from "./auth/actions";
+import { useAuthStore } from "./hooks/use-auth";
 
 export function NavUser() {
   const { isMobile } = useSidebar();
-  const { user, logout } = useAuth();
+  const { user } = useAuthStore();
 
   return (
     <SidebarMenu>
@@ -42,7 +43,7 @@ export function NavUser() {
             >
               <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarImage src="/avatars/shadcn.jpg" alt="JohnDoe" />
-                <AvatarFallback className="rounded-lg">
+                <AvatarFallback className="rounded-lg uppercase">
                   {user?.first_name?.[0]}
                   {user?.last_name?.[0]}
                 </AvatarFallback>
@@ -66,7 +67,7 @@ export function NavUser() {
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
                   <AvatarImage src="/avatars/shadcn.jpg" alt="JohnDoe" />
-                  <AvatarFallback className="rounded-lg">
+                  <AvatarFallback className="rounded-lg uppercase">
                     {user?.first_name?.[0]}
                     {user?.last_name?.[0]}
                   </AvatarFallback>
@@ -102,7 +103,7 @@ export function NavUser() {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={logout}>
+            <DropdownMenuItem onClick={logoutAsync}>
               <LogOut />
               Log out
             </DropdownMenuItem>

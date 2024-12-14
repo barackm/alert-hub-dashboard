@@ -21,10 +21,9 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useAuth } from "./auth-provider";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { loginAsync } from "./actions";
 
 const formSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -34,9 +33,7 @@ const formSchema = z.object({
 type FormData = z.infer<typeof formSchema>;
 
 export function LoginForm() {
-  const { login } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -49,8 +46,7 @@ export function LoginForm() {
   async function onSubmit(data: FormData) {
     try {
       setIsLoading(true);
-      await login(data);
-      router.push("/");
+      await loginAsync(data);
       toast.success("Welcome back!");
     } catch (error: any) {
       toast.error(error.message);

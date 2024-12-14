@@ -20,10 +20,10 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import Link from "next/link";
-import { useAuth } from "./auth-provider";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { registerAsync } from "./actions";
 
 const formSchema = z.object({
   firstName: z.string().min(2, "First name must be at least 2 characters"),
@@ -35,7 +35,6 @@ const formSchema = z.object({
 type FormData = z.infer<typeof formSchema>;
 
 export function RegisterForm() {
-  const { register } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
@@ -52,7 +51,7 @@ export function RegisterForm() {
   async function onSubmit(data: FormData) {
     try {
       setIsLoading(true);
-      await register({
+      await registerAsync({
         email: data.email,
         password: data.password,
         first_name: data.firstName,

@@ -10,6 +10,7 @@ import {
   updateCommunityAgent,
 } from "@/components/community-agents/actions";
 import { mutate } from "swr";
+import { DialogAction, DialogData } from "@/types/confirmation-dialog";
 
 interface CommunityAgentsState {
   selectedAgent: CommunityAgent | null;
@@ -17,11 +18,13 @@ interface CommunityAgentsState {
   isLoading: boolean;
   error: string | null;
   fetchUrl: string;
+  confirmationDialog: DialogData<CommunityAgent>;
 
   openDialog: () => void;
   closeDialog: () => void;
   setSelectedAgent: (agent: CommunityAgent | null) => void;
   setFetchUrl: (url: string) => void;
+  setConfirmationDialog: (data: DialogData<CommunityAgent>) => void;
 
   createAgent: (data: CommunityAgentRequestBody) => Promise<void>;
   updateAgent: (id: number, data: CommunityAgentRequestBody) => Promise<void>;
@@ -34,6 +37,14 @@ export const useCommunityAgents = create<CommunityAgentsState>((set, get) => ({
   isLoading: false,
   error: null,
   fetchUrl: "",
+  confirmationDialog: {
+    open: false,
+    data: null,
+    title: "",
+    description: "",
+    variant: "default",
+    action: DialogAction.CREATE,
+  },
 
   openDialog: () => set({ isDialogOpen: true }),
   closeDialog: () => {
@@ -94,6 +105,7 @@ export const useCommunityAgents = create<CommunityAgentsState>((set, get) => ({
     }
   },
   setFetchUrl: (url) => set({ fetchUrl: url }),
+  setConfirmationDialog: (data) => set({ confirmationDialog: data }),
 }));
 
 export const selectSelectedAgent = (state: CommunityAgentsState) =>

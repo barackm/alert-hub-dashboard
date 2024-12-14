@@ -1,15 +1,7 @@
 "use client";
 
 import * as React from "react";
-import {
-  BookOpen,
-  Bot,
-  Frame,
-  Map,
-  PieChart,
-  Settings2,
-  SquareTerminal,
-} from "lucide-react";
+import { Gauge, ShieldAlertIcon, Users } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
 import { NavUser } from "@/components/nav-user";
@@ -27,40 +19,23 @@ const data = {
     {
       title: "Dashboard",
       url: "/",
-      icon: SquareTerminal,
+      icon: Gauge,
       isActive: true,
     },
     {
       title: "Alerts",
       url: "/alerts",
-      icon: Settings2,
+      icon: ShieldAlertIcon,
     },
     {
       title: "Users",
       url: "/users",
-      icon: Bot,
+      icon: Users,
     },
     {
       title: "Community Agents",
       url: "/community-agents",
-      icon: BookOpen,
-    },
-  ],
-  projects: [
-    {
-      name: "Design Engineering",
-      url: "#",
-      icon: Frame,
-    },
-    {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: Map,
+      icon: Users,
     },
   ],
 };

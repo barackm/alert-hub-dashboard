@@ -3,6 +3,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { Checkbox } from "../ui/checkbox";
 import CommunityAgentActionCell from "./community-agent-action-cell";
+import { parseLocation } from "@/utils/location";
 
 const statusConfig: Record<
   CommunityAgentStatus,
@@ -67,6 +68,14 @@ export const columns: ColumnDef<CommunityAgent>[] = [
   {
     accessorKey: "last_name",
     header: "Last Name",
+  },
+  {
+    accessorKey: "Village",
+    header: "District / village",
+    cell: ({ row }) => {
+      const locationData = parseLocation(row.original.location);
+      return `${locationData.district || "-"} / ${locationData.village || "-"}`;
+    },
   },
   {
     accessorKey: "status",

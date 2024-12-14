@@ -1,8 +1,10 @@
 "use client";
 import { createContext, useContext, useEffect, useState } from "react";
-import { supabase } from "@/utils/supabase/client";
+import { createClient } from "@/utils/supabase/client";
 import { Session } from "@supabase/supabase-js";
-import { User, LoginData, RegisterData } from "@/types/auth";
+import { LoginData, RegisterData } from "@/types/auth";
+import { User } from "@/types/users";
+import { toast } from "sonner";
 
 type AuthContextType = {
   user: User | null;
@@ -10,6 +12,20 @@ type AuthContextType = {
   isLoading: boolean;
   login: (data: LoginData) => Promise<void>;
   register: (data: RegisterData) => Promise<void>;
+  logout: () => Promise<void>;
+};
+
+const getProfile = async (userId: string) => {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", userId)
+    .single();
+
+  console.log({ data });
+  if (error) throw error;
+  return data;
 };
 
 const AuthContext = createContext<AuthContextType>({
@@ -18,20 +34,47 @@ const AuthContext = createContext<AuthContextType>({
   isLoading: true,
   login: async () => {},
   register: async () => {},
+  logout: async () => {},
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const supabase = createClient();
 
   useEffect(() => {
+    console.log("we are here");
+    supabase.auth.getSession().then(({ data: { session: initialSession } }) => {
+      setSession(initialSession);
+      if (initialSession?.user) {
+        getProfile(initialSession.user.id)
+          .then(setUser)
+          .catch((error) => {
+            console.error("Error fetching profile:", error);
+            toast.error("Failed to load user profile");
+          });
+      }
+      setIsLoading(false);
+    });
+
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, session) => {
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setSession(session);
-      setUser((session?.user as unknown as User) ?? null);
-      setIsLoading(false);
+      console.log({ session });
+      if (session?.user) {
+        try {
+          const profile = await getProfile(session.user.id);
+          setUser(profile);
+        } catch (error) {
+          console.error("Error fetching profile:", error);
+          toast.error("Failed to load user profile");
+          setUser(null);
+        }
+      } else {
+        setUser(null);
+      }
     });
 
     return () => subscription.unsubscribe();
@@ -76,12 +119,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const logout = async () => {
+    await supabase.auth.signOut();
+  };
+
   return (
     <AuthContext.Provider
       value={{
         ...value,
         login,
         register,
+        logout,
       }}
     >
       {children}

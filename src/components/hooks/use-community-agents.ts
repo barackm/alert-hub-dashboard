@@ -5,7 +5,7 @@ import {
   CommunityAgentFormValues,
 } from "@/types/community-agents";
 import { sampleData } from "./sample-data";
-import { supabase } from "@/utils/supabase/client";
+import { createClient } from "@/utils/supabase/client";
 
 interface CommunityAgentsState {
   agents: CommunityAgent[];
@@ -21,7 +21,6 @@ interface CommunityAgentsState {
   createAgent: (data: CommunityAgentFormValues) => Promise<void>;
   updateAgent: (id: number, data: CommunityAgentFormValues) => Promise<void>;
   deleteAgent: (id: number) => Promise<void>;
-  fetchAgents: () => Promise<void>;
 }
 
 export const useCommunityAgents = create<CommunityAgentsState>((set) => ({
@@ -41,6 +40,7 @@ export const useCommunityAgents = create<CommunityAgentsState>((set) => ({
 
   createAgent: async (data) => {
     try {
+      const supabase = createClient();
       set({ isLoading: true, error: null });
       const { data: newAgent, error } = await supabase
         .from("community_agents")
@@ -60,6 +60,7 @@ export const useCommunityAgents = create<CommunityAgentsState>((set) => ({
 
   updateAgent: async (id, data) => {
     try {
+      const supabase = createClient();
       set({ isLoading: true, error: null });
       const { data: updatedAgent, error } = await supabase
         .from("community_agents")
@@ -84,6 +85,7 @@ export const useCommunityAgents = create<CommunityAgentsState>((set) => ({
 
   deleteAgent: async (id) => {
     try {
+      const supabase = createClient();
       set({ isLoading: true, error: null });
       const { error } = await supabase
         .from("community_agents")
@@ -94,24 +96,9 @@ export const useCommunityAgents = create<CommunityAgentsState>((set) => ({
       set((state) => ({
         agents: state.agents.filter((agent) => agent.id !== id),
       }));
-    } catch (error) {
+    } catch (error: any) {
       set({ error: `Failed to delete agent: ${error.message}` });
       throw error;
-    } finally {
-      set({ isLoading: false });
-    }
-  },
-
-  fetchAgents: async () => {
-    try {
-      set({ isLoading: true });
-      set({ agents: [] });
-    } catch (error) {
-      set({
-        error: `Failed to fetch agents: ${
-          error instanceof Error ? error.message : String(error)
-        }`,
-      });
     } finally {
       set({ isLoading: false });
     }

@@ -4,31 +4,36 @@ import {
   CommunityAgent,
   CommunityAgentFormValues,
 } from "@/types/community-agents";
-import { sampleData } from "./sample-data";
-import { createClient } from "@/utils/supabase/client";
+import {
+  createCommunityAgent,
+  deleteCommunityAgent,
+  updateCommunityAgent,
+} from "@/components/community-agents/actions";
+import { mutate } from "swr";
 
 interface CommunityAgentsState {
-  agents: CommunityAgent[];
   selectedAgent: CommunityAgent | null;
   isDialogOpen: boolean;
   isLoading: boolean;
   error: string | null;
+  fetchUrl: string;
 
   openDialog: () => void;
   closeDialog: () => void;
   setSelectedAgent: (agent: CommunityAgent | null) => void;
+  setFetchUrl: (url: string) => void;
 
   createAgent: (data: CommunityAgentFormValues) => Promise<void>;
   updateAgent: (id: number, data: CommunityAgentFormValues) => Promise<void>;
   deleteAgent: (id: number) => Promise<void>;
 }
 
-export const useCommunityAgents = create<CommunityAgentsState>((set) => ({
-  agents: sampleData,
+export const useCommunityAgents = create<CommunityAgentsState>((set, get) => ({
   selectedAgent: null,
   isDialogOpen: false,
   isLoading: false,
   error: null,
+  fetchUrl: "",
 
   openDialog: () => set({ isDialogOpen: true }),
   closeDialog: () => {
@@ -40,16 +45,9 @@ export const useCommunityAgents = create<CommunityAgentsState>((set) => ({
 
   createAgent: async (data) => {
     try {
-      const supabase = createClient();
       set({ isLoading: true, error: null });
-      const { data: newAgent, error } = await supabase
-        .from("community_agents")
-        .insert([data])
-        .select()
-        .single();
-
-      if (error) throw error;
-      set((state) => ({ agents: [newAgent, ...state.agents] }));
+      await createCommunityAgent(data);
+      mutate(get().fetchUrl);
     } catch (error: any) {
       set({ error: `Failed to create agent: ${error.message}` });
       throw error;
@@ -60,21 +58,9 @@ export const useCommunityAgents = create<CommunityAgentsState>((set) => ({
 
   updateAgent: async (id, data) => {
     try {
-      const supabase = createClient();
       set({ isLoading: true, error: null });
-      const { data: updatedAgent, error } = await supabase
-        .from("community_agents")
-        .update(data)
-        .eq("id", id)
-        .select()
-        .single();
-
-      if (error) throw error;
-      set((state) => ({
-        agents: state.agents.map((agent) =>
-          agent.id === id ? updatedAgent : agent
-        ),
-      }));
+      await updateCommunityAgent(id, data);
+      mutate(get().fetchUrl);
     } catch (error: any) {
       set({ error: `Failed to update agent: ${error.message}` });
       throw error;
@@ -85,17 +71,9 @@ export const useCommunityAgents = create<CommunityAgentsState>((set) => ({
 
   deleteAgent: async (id) => {
     try {
-      const supabase = createClient();
       set({ isLoading: true, error: null });
-      const { error } = await supabase
-        .from("community_agents")
-        .delete()
-        .eq("id", id);
-
-      if (error) throw error;
-      set((state) => ({
-        agents: state.agents.filter((agent) => agent.id !== id),
-      }));
+      await deleteCommunityAgent(id);
+      mutate(get().fetchUrl);
     } catch (error: any) {
       set({ error: `Failed to delete agent: ${error.message}` });
       throw error;
@@ -103,9 +81,9 @@ export const useCommunityAgents = create<CommunityAgentsState>((set) => ({
       set({ isLoading: false });
     }
   },
+  setFetchUrl: (url) => set({ fetchUrl: url }),
 }));
 
-export const selectAgents = (state: CommunityAgentsState) => state.agents;
 export const selectSelectedAgent = (state: CommunityAgentsState) =>
   state.selectedAgent;
 export const selectIsLoading = (state: CommunityAgentsState) => state.isLoading;

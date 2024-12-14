@@ -24,6 +24,7 @@ import { CommunityAgentStatus } from "@/types/community-agents";
 import { useEffect } from "react";
 import { useCommunityAgents } from "../../hooks/use-community-agents";
 import { isEqual } from "lodash";
+import { toast } from "sonner";
 
 export function CommunityAgentDialog() {
   const selectedAgent = useCommunityAgents((state) => state.selectedAgent);
@@ -65,16 +66,22 @@ export function CommunityAgentDialog() {
     if (!isEqual(currentValues, newValues)) {
       form.reset(newValues);
     }
-  }, [selectedAgent, form]);
+  }, [selectedAgent]);
 
   const handleSubmit = async (values: CommunityAgentFormValues) => {
-    if (selectedAgent) {
-      await updateAgent(selectedAgent.id, values as any);
-    } else {
-      await createAgent(values as any);
+    try {
+      if (selectedAgent) {
+        await updateAgent(selectedAgent.id, values as any);
+        toast.success("Agent updated successfully");
+      } else {
+        await createAgent(values as any);
+        toast.success("Agent created successfully");
+      }
+      form.reset();
+      closeDialog();
+    } catch (error: any) {
+      toast.error(error.message);
     }
-    form.reset();
-    closeDialog();
   };
 
   return (
@@ -184,12 +191,12 @@ export function CommunityAgentDialog() {
             />
             <div className="flex justify-end space-x-2">
               <DialogClose asChild>
-                <Button type="button" variant="outline">
+                <Button type="button" variant="outline" disabled={isLoading}>
                   Cancel
                 </Button>
               </DialogClose>
-              <Button type="submit" disabled={isLoading}>
-                {isLoading ? "Saving..." : "Save"}
+              <Button type="submit" loading={isLoading}>
+                {selectedAgent ? "Save" : "Create"}
               </Button>
             </div>
           </form>

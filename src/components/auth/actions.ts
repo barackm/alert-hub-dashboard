@@ -14,7 +14,6 @@ export async function loginAsync(data: { email: string; password: string }) {
     throw error;
   }
 
-  revalidatePath("/", "layout");
   redirect("/");
 }
 

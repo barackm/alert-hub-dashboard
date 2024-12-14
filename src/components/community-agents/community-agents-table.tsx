@@ -1,16 +1,29 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { DataTable, DataTableConfig } from "../table/data-table";
 import { columns } from "./columns";
-import { CommunityAgentStatus } from "@/types/community-agents";
+import { CommunityAgent, CommunityAgentStatus } from "@/types/community-agents";
 import { CommunityAgentDialog } from "./community-agent-dialog";
-import {
-  selectAgents,
-  useCommunityAgents,
-} from "../../hooks/use-community-agents";
+
+import useSWR from "swr";
+import { fetchCommunityAgents } from "./actions";
+import { useCommunityAgents } from "@/hooks/use-community-agents";
+import { isEqual } from "lodash";
 
 const CommunityAgentsTable = () => {
-  const agents = useCommunityAgents(selectAgents);
+  const url = "/community-agents";
+  const { data, isLoading } = useSWR<CommunityAgent[]>(url, () =>
+    fetchCommunityAgents()
+  );
+  const setFetchUrl = useCommunityAgents((state) => state.setFetchUrl);
+  const fetchUrl = useCommunityAgents((state) => state.fetchUrl);
+  const communityAgents = React.useMemo(() => data || [], [data]);
+
+  useEffect(() => {
+    if (url && !isEqual(fetchUrl, url)) {
+      setFetchUrl(url);
+    }
+  }, [url, fetchUrl, setFetchUrl]);
 
   const config: DataTableConfig = {
     enableRowSelection: true,
@@ -37,12 +50,13 @@ const CommunityAgentsTable = () => {
       },
     ],
     showToolbar: true,
+    isLoading,
   };
 
   return (
     <div className="container mx-auto">
       <CommunityAgentDialog />
-      <DataTable columns={columns} data={agents} config={config} />
+      <DataTable columns={columns} data={communityAgents} config={config} />
     </div>
   );
 };

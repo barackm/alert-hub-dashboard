@@ -9,9 +9,18 @@ import { SWRProvider } from "./swr-provider";
 import AuthProvider from "./auth/auth-provider";
 
 const AppWrapper = (props: PropsWithChildren) => {
+  const [mounted, setMounted] = React.useState(false);
   const pathname = usePathname();
   const unauthenticatedPaths = ["/login", "/register"];
   const shouldShowSidebar = !unauthenticatedPaths.includes(pathname);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <AuthProvider>

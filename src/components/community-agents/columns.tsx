@@ -76,8 +76,10 @@ export const columns: ColumnDef<CommunityAgent>[] = [
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => {
-      const status = row.getValue("status") as keyof typeof statusConfig;
-      const config = statusConfig[status];
+      const status =
+        (row.getValue("status") as keyof typeof statusConfig) ||
+        CommunityAgentStatus.INACTIVE;
+      const config = statusConfig[status] || statusConfig.INACTIVE;
 
       return (
         <span

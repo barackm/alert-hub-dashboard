@@ -9,6 +9,8 @@ import useSWR from "swr";
 import { fetchCommunityAgents } from "./actions";
 import { useCommunityAgents } from "@/hooks/use-community-agents";
 import { isEqual } from "lodash";
+import { Button } from "../ui/button";
+import { PlusIcon } from "lucide-react";
 
 const CommunityAgentsTable = () => {
   const url = "/community-agents";
@@ -16,6 +18,7 @@ const CommunityAgentsTable = () => {
     fetchCommunityAgents()
   );
   const setFetchUrl = useCommunityAgents((state) => state.setFetchUrl);
+  const openDialog = useCommunityAgents((state) => state.openDialog);
   const fetchUrl = useCommunityAgents((state) => state.fetchUrl);
   const communityAgents = React.useMemo(() => data || [], [data]);
 
@@ -51,6 +54,19 @@ const CommunityAgentsTable = () => {
     ],
     showToolbar: true,
     isLoading,
+    renderAdditionalActions: () => (
+      <>
+        <Button
+          variant="outline"
+          size="sm"
+          className="ml-auto hidden h-8 lg:flex"
+          onClick={() => openDialog()}
+        >
+          <PlusIcon />
+          New Community Agent
+        </Button>
+      </>
+    ),
   };
 
   return (

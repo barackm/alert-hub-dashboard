@@ -40,6 +40,7 @@ export interface DataTableConfig {
   isLoading?: boolean;
   loadingState?: React.ReactNode;
   facetedFilters?: FacetedFilter[];
+  renderAdditionalActions?: (table: any) => React.ReactNode;
 }
 
 interface DataTableProps<TData, TValue> {
@@ -64,6 +65,7 @@ export function DataTable<TData, TValue>({
     emptyState,
     isLoading,
     facetedFilters,
+    renderAdditionalActions,
   } = config;
 
   const [rowSelection, setRowSelection] = React.useState({});
@@ -104,6 +106,7 @@ export function DataTable<TData, TValue>({
           searchColumn={searchColumn}
           searchPlaceholder={searchPlaceholder}
           facetedFilters={facetedFilters}
+          renderAdditionalActions={renderAdditionalActions}
         />
       )}
       <div className="rounded-md border">

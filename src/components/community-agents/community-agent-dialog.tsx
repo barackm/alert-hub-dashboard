@@ -4,6 +4,7 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -25,6 +26,7 @@ import { useEffect } from "react";
 import { useCommunityAgents } from "../../hooks/use-community-agents";
 import { isEqual } from "lodash";
 import { toast } from "sonner";
+import { LocationSelect } from "./location-select";
 
 export function CommunityAgentDialog() {
   const selectedAgent = useCommunityAgents((state) => state.selectedAgent);
@@ -139,12 +141,9 @@ export function CommunityAgentDialog() {
             <FormField
               control={form.control}
               name="village"
-              render={({ field }) => (
+              render={() => (
                 <FormItem>
-                  <FormLabel>Village</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
+                  <LocationSelect setValue={form.setValue} />
                   <FormMessage />
                 </FormItem>
               )}
@@ -189,16 +188,19 @@ export function CommunityAgentDialog() {
                 </FormItem>
               )}
             />
-            <div className="flex justify-end space-x-2">
-              <DialogClose asChild>
-                <Button type="button" variant="outline" disabled={isLoading}>
-                  Cancel
+
+            <DialogFooter>
+              <div className="flex justify-end space-x-2">
+                <DialogClose asChild>
+                  <Button type="button" variant="outline" disabled={isLoading}>
+                    Cancel
+                  </Button>
+                </DialogClose>
+                <Button type="submit" loading={isLoading}>
+                  {selectedAgent ? "Save" : "Create"}
                 </Button>
-              </DialogClose>
-              <Button type="submit" loading={isLoading}>
-                {selectedAgent ? "Save" : "Create"}
-              </Button>
-            </div>
+              </div>
+            </DialogFooter>
           </form>
         </Form>
       </DialogContent>

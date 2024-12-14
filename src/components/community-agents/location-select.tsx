@@ -7,158 +7,182 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useLocations } from "@/hooks/use-location";
-import { UseFormSetValue } from "react-hook-form";
+import { useFormContext } from "react-hook-form";
+import { FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { CommunityAgentFormValues } from "./schema";
-import { FormLabel } from "../ui/form";
-import { Label } from "../ui/label";
 
-interface LocationSelectProps {
-  setValue: UseFormSetValue<CommunityAgentFormValues>;
-}
-
-export function LocationSelect({ setValue }: LocationSelectProps) {
-  const {
-    provinces,
-    districts,
-    sectors,
-    cells,
-    villages,
-    selectedProvince,
-    selectedDistrict,
-    selectedSector,
-    selectedCell,
-    setSelectedProvince,
-    setSelectedDistrict,
-    setSelectedSector,
-    setSelectedCell,
-    loadingState,
-  } = useLocations();
+export function LocationSelect() {
+  const { control, watch, setValue } =
+    useFormContext<CommunityAgentFormValues>();
+  const { provinces, districts, sectors, cells, villages, loadingState } =
+    useLocations({
+      selectedCell: watch("cell"),
+      selectedDistrict: watch("district"),
+      selectedProvince: watch("province"),
+      selectedSector: watch("sector"),
+    });
 
   return (
     <div className="space-y-4">
-      <div className="space-y-2">
-        <Label>Province</Label>
-        <Select
-          value={selectedProvince}
-          onValueChange={(value) => {
-            setSelectedProvince(value);
-            setSelectedDistrict("");
-            setSelectedSector("");
-            setSelectedCell("");
-            setValue("village", "");
-          }}
-          disabled={loadingState.loadingProvinces}
-        >
-          <SelectTrigger loading={loadingState.loadingProvinces}>
-            <SelectValue placeholder="Select province" />
-          </SelectTrigger>
-          <SelectContent>
-            {provinces.map((province) => (
-              <SelectItem key={province} value={province}>
-                {province}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+      <FormField
+        control={control}
+        name="province"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Province</FormLabel>
+            <Select
+              value={field.value}
+              onValueChange={(value) => {
+                setValue("village", "");
+                setValue("cell", "");
+                setValue("sector", "");
+                setValue("district", "");
+                setValue("province", value);
+              }}
+              disabled={loadingState.loadingProvinces}
+            >
+              <SelectTrigger loading={loadingState.loadingProvinces}>
+                <SelectValue placeholder="Select province" />
+              </SelectTrigger>
+              <SelectContent>
+                {provinces.map((province) => (
+                  <SelectItem key={province} value={province}>
+                    {province}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
 
-      {selectedProvince && (
-        <div className="space-y-2">
-          <Label>District</Label>
-          <Select
-            value={selectedDistrict}
-            onValueChange={(value) => {
-              setSelectedDistrict(value);
-              setSelectedSector("");
-              setSelectedCell("");
-              setValue("village", "");
-            }}
-            disabled={loadingState.loadingDistricts}
-          >
-            <SelectTrigger loading={loadingState.loadingDistricts}>
-              <SelectValue placeholder="Select district" />
-            </SelectTrigger>
-            <SelectContent>
-              {districts.map((district) => (
-                <SelectItem key={district} value={district}>
-                  {district}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+      {watch("province") && (
+        <FormField
+          control={control}
+          name="district"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>District</FormLabel>
+              <Select
+                value={field.value}
+                onValueChange={(value) => {
+                  setValue("village", "");
+                  setValue("cell", "");
+                  setValue("sector", "");
+                  setValue("district", value);
+                }}
+                disabled={loadingState.loadingDistricts}
+              >
+                <SelectTrigger loading={loadingState.loadingDistricts}>
+                  <SelectValue placeholder="Select district" />
+                </SelectTrigger>
+                <SelectContent>
+                  {districts.map((district) => (
+                    <SelectItem key={district} value={district}>
+                      {district}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
       )}
 
-      {selectedDistrict && (
-        <div className="space-y-2">
-          <Label>Sector</Label>
-          <Select
-            value={selectedSector}
-            onValueChange={(value) => {
-              setSelectedSector(value);
-              setSelectedCell("");
-              setValue("village", "");
-            }}
-            disabled={loadingState.loadingSectors}
-          >
-            <SelectTrigger loading={loadingState.loadingSectors}>
-              <SelectValue placeholder="Select sector" />
-            </SelectTrigger>
-            <SelectContent>
-              {sectors.map((sector) => (
-                <SelectItem key={sector} value={sector}>
-                  {sector}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+      {watch("district") && (
+        <FormField
+          control={control}
+          name="sector"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Sector</FormLabel>
+              <Select
+                value={field.value}
+                onValueChange={(value) => {
+                  setValue("village", "");
+                  setValue("cell", "");
+                  setValue("sector", value);
+                }}
+                disabled={loadingState.loadingSectors}
+              >
+                <SelectTrigger loading={loadingState.loadingSectors}>
+                  <SelectValue placeholder="Select sector" />
+                </SelectTrigger>
+                <SelectContent>
+                  {sectors.map((sector) => (
+                    <SelectItem key={sector} value={sector}>
+                      {sector}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
       )}
 
-      {selectedSector && (
-        <div className="space-y-2">
-          <Label>Cell</Label>
-          <Select
-            value={selectedCell}
-            onValueChange={(value) => {
-              setSelectedCell(value);
-              setValue("village", "");
-            }}
-            disabled={loadingState.loadingCells}
-          >
-            <SelectTrigger loading={loadingState.loadingCells}>
-              <SelectValue placeholder="Select cell" />
-            </SelectTrigger>
-            <SelectContent>
-              {cells.map((cell) => (
-                <SelectItem key={cell} value={cell}>
-                  {cell}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+      {watch("sector") && (
+        <FormField
+          control={control}
+          name="cell"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Cell</FormLabel>
+              <Select
+                value={field.value}
+                onValueChange={(value) => {
+                  setValue("village", "");
+                  setValue("cell", value);
+                }}
+                disabled={loadingState.loadingCells}
+              >
+                <SelectTrigger loading={loadingState.loadingCells}>
+                  <SelectValue placeholder="Select cell" />
+                </SelectTrigger>
+                <SelectContent>
+                  {cells.map((cell) => (
+                    <SelectItem key={cell} value={cell}>
+                      {cell}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
       )}
 
-      {selectedCell && (
-        <div className="space-y-2">
-          <FormLabel>Village</FormLabel>
-          <Select
-            onValueChange={(value) => setValue("village", value)}
-            disabled={loadingState.loadingVillages}
-          >
-            <SelectTrigger loading={loadingState.loadingVillages}>
-              <SelectValue placeholder="Select village" />
-            </SelectTrigger>
-            <SelectContent>
-              {villages.map((village) => (
-                <SelectItem key={village} value={village}>
-                  {village}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+      {watch("cell") && (
+        <FormField
+          control={control}
+          name="village"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Village</FormLabel>
+              <Select
+                value={field.value}
+                onValueChange={(value) => setValue("village", value)}
+                disabled={loadingState.loadingVillages}
+              >
+                <SelectTrigger loading={loadingState.loadingVillages}>
+                  <SelectValue placeholder="Select village" />
+                </SelectTrigger>
+                <SelectContent>
+                  {villages.map((village) => (
+                    <SelectItem key={village} value={village}>
+                      {village}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
       )}
     </div>
   );

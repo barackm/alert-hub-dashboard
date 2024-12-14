@@ -1,7 +1,7 @@
 "use server";
 
 import { createClient } from "@/utils/supabase/server";
-import { CommunityAgentFormValues } from "@/types/community-agents";
+import { CommunityAgentRequestBody } from "@/types/community-agents";
 import { revalidatePath } from "next/cache";
 
 export const fetchCommunityAgents = async () => {
@@ -15,7 +15,7 @@ export const fetchCommunityAgents = async () => {
   return data;
 };
 
-export const createCommunityAgent = async (data: CommunityAgentFormValues) => {
+export const createCommunityAgent = async (data: CommunityAgentRequestBody) => {
   const supabase = await createClient();
   const { data: newAgent, error } = await supabase
     .from("community_agents")
@@ -30,7 +30,7 @@ export const createCommunityAgent = async (data: CommunityAgentFormValues) => {
 
 export const updateCommunityAgent = async (
   id: number,
-  data: CommunityAgentFormValues
+  data: CommunityAgentRequestBody
 ) => {
   const supabase = await createClient();
   const { data: updatedAgent, error } = await supabase

@@ -6,6 +6,7 @@ export type CommunityAgent = {
   last_name: string;
   village: string;
   status: CommunityAgentStatus;
+  location: string;
 };
 
 export enum CommunityAgentStatus {
@@ -13,10 +14,10 @@ export enum CommunityAgentStatus {
   INACTIVE = "INACTIVE",
 }
 
-export type CommunityAgentFormValues = {
+export type CommunityAgentRequestBody = {
   first_name: string;
   last_name: string;
   phone: string;
-  village: string;
+  location: string;
   status: CommunityAgentStatus;
 };

@@ -1,12 +1,14 @@
-import { useState } from "react";
 import useSWR from "swr";
 import { fetchLocation } from "@/actions/location";
-
-export function useLocations() {
-  const [selectedProvince, setSelectedProvince] = useState("");
-  const [selectedDistrict, setSelectedDistrict] = useState("");
-  const [selectedSector, setSelectedSector] = useState("");
-  const [selectedCell, setSelectedCell] = useState("");
+type DataState = {
+  selectedProvince?: string;
+  selectedDistrict?: string;
+  selectedSector?: string;
+  selectedCell?: string;
+};
+export function useLocations(state: DataState) {
+  const { selectedProvince, selectedDistrict, selectedSector, selectedCell } =
+    state;
 
   const { data: provinces = [], isLoading: loadingProvinces } = useSWR(
     "/provinces",
@@ -54,14 +56,6 @@ export function useLocations() {
     sectors,
     cells,
     villages,
-    selectedProvince,
-    selectedDistrict,
-    selectedSector,
-    selectedCell,
-    setSelectedProvince,
-    setSelectedDistrict,
-    setSelectedSector,
-    setSelectedCell,
     loadingState: {
       loadingProvinces,
       loadingDistricts,

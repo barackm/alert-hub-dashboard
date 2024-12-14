@@ -69,10 +69,6 @@ export const columns: ColumnDef<CommunityAgent>[] = [
     header: "Last Name",
   },
   {
-    accessorKey: "village",
-    header: "Village",
-  },
-  {
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => {

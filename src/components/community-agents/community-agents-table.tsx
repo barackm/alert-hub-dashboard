@@ -36,14 +36,6 @@ const CommunityAgentsTable = () => {
     searchPlaceholder: "Search members...",
     facetedFilters: [
       {
-        column: "village",
-        title: "Village",
-        options: [
-          { label: "Gasharu", value: "Gasharu" },
-          { label: "Ntaganzwa", value: "Ntaganzwa" },
-        ],
-      },
-      {
         column: "status",
         title: "Status",
         options: Object.values(CommunityAgentStatus).map((status) => ({

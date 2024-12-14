@@ -27,6 +27,7 @@ import { useCommunityAgents } from "../../hooks/use-community-agents";
 import { isEqual } from "lodash";
 import { toast } from "sonner";
 import { LocationSelect } from "./location-select";
+import { parseLocation } from "@/utils/location";
 
 export function CommunityAgentDialog() {
   const selectedAgent = useCommunityAgents((state) => state.selectedAgent);
@@ -42,27 +43,34 @@ export function CommunityAgentDialog() {
       first_name: "",
       last_name: "",
       phone: "",
-      village: "",
       status: CommunityAgentStatus.ACTIVE,
+      province: "",
+      district: "",
+      sector: "",
+      cell: "",
+      village: "",
     },
   });
 
   useEffect(() => {
     const currentValues = form.getValues();
+    const locationData = parseLocation(selectedAgent?.location);
+    console.log({ locationData, selectedAgent });
+
     const newValues = selectedAgent
       ? {
           first_name: selectedAgent.first_name,
           last_name: selectedAgent.last_name,
           phone: selectedAgent.phone,
-          village: selectedAgent.village,
           status: selectedAgent.status,
+          ...locationData,
         }
       : {
           first_name: "",
           last_name: "",
           phone: "",
-          village: "",
           status: CommunityAgentStatus.ACTIVE,
+          ...locationData,
         };
 
     if (!isEqual(currentValues, newValues)) {
@@ -72,11 +80,24 @@ export function CommunityAgentDialog() {
 
   const handleSubmit = async (values: CommunityAgentFormValues) => {
     try {
+      const body = {
+        first_name: values.first_name,
+        last_name: values.last_name,
+        phone: values.phone,
+        location: JSON.stringify({
+          province: values.province,
+          district: values.district,
+          sector: values.sector,
+          cell: values.cell,
+          village: values.village,
+        }),
+        status: values.status as CommunityAgentStatus,
+      };
       if (selectedAgent) {
-        await updateAgent(selectedAgent.id, values as any);
+        await updateAgent(selectedAgent.id, body);
         toast.success("Agent updated successfully");
       } else {
-        await createAgent(values as any);
+        await createAgent(body);
         toast.success("Agent created successfully");
       }
       form.reset();
@@ -138,16 +159,7 @@ export function CommunityAgentDialog() {
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="village"
-              render={() => (
-                <FormItem>
-                  <LocationSelect setValue={form.setValue} />
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <LocationSelect />
             <FormField
               control={form.control}
               name="status"

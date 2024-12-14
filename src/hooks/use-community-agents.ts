@@ -2,7 +2,7 @@
 import { create } from "zustand";
 import {
   CommunityAgent,
-  CommunityAgentFormValues,
+  CommunityAgentRequestBody,
 } from "@/types/community-agents";
 import {
   createCommunityAgent,
@@ -23,8 +23,8 @@ interface CommunityAgentsState {
   setSelectedAgent: (agent: CommunityAgent | null) => void;
   setFetchUrl: (url: string) => void;
 
-  createAgent: (data: CommunityAgentFormValues) => Promise<void>;
-  updateAgent: (id: number, data: CommunityAgentFormValues) => Promise<void>;
+  createAgent: (data: CommunityAgentRequestBody) => Promise<void>;
+  updateAgent: (id: number, data: CommunityAgentRequestBody) => Promise<void>;
   deleteAgent: (id: number) => Promise<void>;
 }
 
@@ -46,7 +46,13 @@ export const useCommunityAgents = create<CommunityAgentsState>((set, get) => ({
   createAgent: async (data) => {
     try {
       set({ isLoading: true, error: null });
-      await createCommunityAgent(data);
+      await createCommunityAgent({
+        first_name: data.first_name,
+        last_name: data.last_name,
+        phone: data.phone,
+        location: data.location,
+        status: data.status,
+      });
       mutate(get().fetchUrl);
     } catch (error: any) {
       set({ error: `Failed to create agent: ${error.message}` });
@@ -59,7 +65,13 @@ export const useCommunityAgents = create<CommunityAgentsState>((set, get) => ({
   updateAgent: async (id, data) => {
     try {
       set({ isLoading: true, error: null });
-      await updateCommunityAgent(id, data);
+      await updateCommunityAgent(id, {
+        first_name: data.first_name,
+        last_name: data.last_name,
+        phone: data.phone,
+        location: data.location,
+        status: data.status,
+      });
       mutate(get().fetchUrl);
     } catch (error: any) {
       set({ error: `Failed to update agent: ${error.message}` });

@@ -22,7 +22,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { communityAgentSchema, type CommunityAgentFormValues } from "./schema";
 import { CommunityAgentStatus } from "@/types/community-agents";
 import { useEffect } from "react";
-import { useCommunityAgents } from "../hooks/use-community-agents";
+import { useCommunityAgents } from "../../hooks/use-community-agents";
 import { isEqual } from "lodash";
 
 export function CommunityAgentDialog() {

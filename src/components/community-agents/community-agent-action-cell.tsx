@@ -3,7 +3,7 @@ import { CommunityAgent } from "@/types/community-agents";
 import { Row } from "@tanstack/react-table";
 import React from "react";
 import { Action, DataTableRowActions } from "../table/data-table-row-actions";
-import { useCommunityAgents } from "../hooks/use-community-agents";
+import { useCommunityAgents } from "../../hooks/use-community-agents";
 
 type Props = {
   row: Row<CommunityAgent>;

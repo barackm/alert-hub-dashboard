@@ -26,7 +26,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { logoutAsync } from "./auth/actions";
-import { useAuthStore } from "./hooks/use-auth";
+import { useAuthStore } from "../hooks/use-auth";
 
 export function NavUser() {
   const { isMobile } = useSidebar();

@@ -24,6 +24,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { registerAsync } from "./actions";
+import { useAuth } from "./auth-provider";
 
 const formSchema = z.object({
   firstName: z.string().min(2, "First name must be at least 2 characters"),
@@ -37,6 +38,7 @@ type FormData = z.infer<typeof formSchema>;
 export function RegisterForm() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const { refreshUser } = useAuth();
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -58,6 +60,7 @@ export function RegisterForm() {
         last_name: data.lastName,
       });
       router.push("/");
+      await refreshUser();
       toast.success("Welcome!");
     } catch (error: any) {
       console.error(error);

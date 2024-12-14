@@ -39,10 +39,10 @@ export function DataTableRowActions<TData>({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[160px]">
-        {actions.map((action) => (
+        {actions.map((action, index) => (
           <>
             <DropdownMenuItem
-              key={action.label}
+              key={`${action.label}-${index}`}
               onClick={() => action.onClick(row.original as never)}
             >
               {action.label}

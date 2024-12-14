@@ -7,7 +7,7 @@ import { CommunityAgentDialog } from "./community-agent-dialog";
 import {
   selectAgents,
   useCommunityAgents,
-} from "../hooks/use-community-agents";
+} from "../../hooks/use-community-agents";
 
 const CommunityAgentsTable = () => {
   const agents = useCommunityAgents(selectAgents);

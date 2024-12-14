@@ -24,6 +24,7 @@ import { z } from "zod";
 import { useState } from "react";
 import { toast } from "sonner";
 import { loginAsync } from "./actions";
+import { useAuth } from "./auth-provider";
 
 const formSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -34,6 +35,7 @@ type FormData = z.infer<typeof formSchema>;
 
 export function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
+  const { refreshUser } = useAuth();
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -47,10 +49,11 @@ export function LoginForm() {
     try {
       setIsLoading(true);
       await loginAsync(data);
+      await refreshUser();
       toast.success("Welcome back!");
     } catch (error: any) {
       toast.error(error.message);
-      console.error(error);
+      console.log(error);
     } finally {
       setIsLoading(false);
     }

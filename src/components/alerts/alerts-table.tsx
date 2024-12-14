@@ -1,7 +1,15 @@
+"use client";
 import { DataTable, DataTableConfig } from "@/components/table/data-table";
-import { columns, sampleData } from "./columns";
+import { columns } from "./columns";
+import useSWR from "swr";
+import { getAlerts } from "./actions";
+import { Alert } from "@/types/alerts";
 
 export default function AlertsTable() {
+  const { data = [] } = useSWR<Alert[]>("/alerts", () => getAlerts());
+  const alerts = data;
+  console.log({ alerts });
+
   const config: DataTableConfig = {
     enableRowSelection: true,
     enableSorting: true,
@@ -33,7 +41,7 @@ export default function AlertsTable() {
 
   return (
     <div className="container mx-auto">
-      <DataTable columns={columns} data={sampleData} config={config} />
+      <DataTable columns={columns} data={[]} config={config} />
     </div>
   );
 }

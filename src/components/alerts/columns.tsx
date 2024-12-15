@@ -2,24 +2,32 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
-import { Alert } from "@/types/alerts";
+import { Alert, AlertStatus } from "@/types/alerts";
 import { AlertActionsCell } from "./alert-action-cell";
 import { Checkbox } from "../ui/checkbox";
 import { cn } from "@/lib/utils";
 import { CopyButton } from "../copy-button";
 
 const statusConfig = {
-  ACTIVE: {
+  [AlertStatus.WORSENED]: {
     variant: "destructive",
     className: "bg-red-100 text-red-800 hover:bg-red-200",
   },
-  PENDING: {
+  [AlertStatus.PENDING]: {
     variant: "default",
-    className: "bg-gray-100 text-gray-800 hover:bg-gray-200",
+    className: "bg-primary/10 text-primary/80 hover:bg-primary/20",
   },
-  RESOLVED: {
+  [AlertStatus.IMPROVED]: {
     variant: "secondary",
     className: "bg-green-100 text-green-800 hover:bg-green-200",
+  },
+  [AlertStatus.CONTAINED]: {
+    variant: "outline",
+    className: "bg-blue-100 text-blue-800 hover:bg-blue-200",
+  },
+  [AlertStatus.FALSE_ALERT]: {
+    variant: "outline",
+    className: "bg-yellow-100 text-yellow-800 hover:bg-yellow-200",
   },
 } as const;
 
@@ -62,7 +70,6 @@ export const columns: ColumnDef<Alert>[] = [
         </div>
       );
     },
-    // size: 220,
   },
   {
     accessorKey: "created_at",

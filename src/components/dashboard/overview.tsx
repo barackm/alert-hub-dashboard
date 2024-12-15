@@ -71,21 +71,21 @@ export function Overview() {
             <Line
               dataKey="death"
               type="monotone"
-              stroke="var(--color-desktop)"
+              stroke="hsl(var(--chart-1))"
               strokeWidth={2}
               dot={false}
             />
             <Line
               dataKey="pandemic"
               type="monotone"
-              stroke="var(--color-mobile)"
+              stroke="hsl(var(--chart-2))"
               strokeWidth={2}
               dot={false}
             />
             <Line
               dataKey="disease"
               type="monotone"
-              stroke="var(--color-tablet)"
+              stroke="hsl(var(--chart-3))"
               strokeWidth={2}
               dot={false}
             />

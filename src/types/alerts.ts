@@ -10,7 +10,15 @@ export type Alert = {
   identifier: string;
   affected_count: string;
   details: string;
-  status: string;
+  status: AlertStatus;
   reporter_phone: string;
   updated_at: string;
 };
+
+export enum AlertStatus {
+  PENDING = "PENDING",
+  FALSE_ALERT = "FALSE_ALERT",
+  IMPROVED = "IMPROVED",
+  WORSENED = "WORSENED",
+  CONTAINED = "CONTAINED",
+}

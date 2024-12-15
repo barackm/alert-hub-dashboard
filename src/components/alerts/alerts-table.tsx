@@ -4,12 +4,20 @@ import { columns } from "./columns";
 import useSWR from "swr";
 import { getAlerts } from "./actions";
 import { Alert } from "@/types/alerts";
+import { useSearchParams } from "next/navigation";
+import { FetchResponse } from "@/types/fetch";
 
 export default function AlertsTable() {
-  const { data = [], isLoading } = useSWR<Alert[]>("/alerts", () =>
-    getAlerts()
+  const searchParams = useSearchParams();
+  const page = searchParams.get("page") || 1;
+  const limit = searchParams.get("limit") || 10;
+
+  const url = `/alerts?page=${page}&limit=${limit}`;
+  const { data, isLoading } = useSWR<FetchResponse<Alert[]>>(url, () =>
+    getAlerts({ page: Number(page), limit: Number(limit) })
   );
-  const alerts = data || [];
+
+  const { data: alerts, total = 0 } = data || { data: [] };
 
   const config: DataTableConfig = {
     enableRowSelection: true,
@@ -39,11 +47,12 @@ export default function AlertsTable() {
     ],
     showToolbar: true,
     isLoading: isLoading,
+    total,
   };
 
   return (
     <div className="container mx-auto">
-      <DataTable columns={columns} data={alerts} config={config} />
+      <DataTable columns={columns} data={alerts as Alert[]} config={config} />
     </div>
   );
 }

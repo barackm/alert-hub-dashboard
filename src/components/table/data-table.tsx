@@ -41,6 +41,7 @@ export interface DataTableConfig {
   loadingState?: React.ReactNode;
   facetedFilters?: FacetedFilter[];
   renderAdditionalActions?: (table: any) => React.ReactNode;
+  total?: number;
 }
 
 interface DataTableProps<TData, TValue> {
@@ -66,6 +67,7 @@ export function DataTable<TData, TValue>({
     isLoading,
     facetedFilters,
     renderAdditionalActions,
+    total,
   } = config;
 
   const [rowSelection, setRowSelection] = React.useState({});
@@ -170,7 +172,9 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      {enablePagination && <DataTablePagination table={table} />}
+      {enablePagination && (
+        <DataTablePagination table={table} totalRows={total} />
+      )}
     </div>
   );
 }

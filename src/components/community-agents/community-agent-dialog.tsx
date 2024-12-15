@@ -76,6 +76,7 @@ export function CommunityAgentDialog() {
     if (!isEqual(currentValues, newValues)) {
       form.reset(newValues);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedAgent]);
 
   const handleSubmit = async (values: CommunityAgentFormValues) => {

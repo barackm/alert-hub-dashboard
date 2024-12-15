@@ -26,7 +26,7 @@ const AppWrapper = (props: PropsWithChildren) => {
     <AuthProvider>
       <SWRProvider>
         <SidebarProvider>
-          {shouldShowSidebar && <AppSidebar />}
+          {shouldShowSidebar && <AppSidebar className="bg-white" />}
           <SidebarInset>
             {shouldShowSidebar && <AppHeader />}
             <div

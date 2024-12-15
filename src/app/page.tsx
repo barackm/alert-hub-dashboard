@@ -15,7 +15,7 @@ export default function Home() {
   return (
     <div className="flex-1 space-y-4 pt-6 overflow-x-hidden">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
+        <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-2">
           <CalendarDateRangePicker />
           <Button className="w-full sm:w-auto">Download</Button>

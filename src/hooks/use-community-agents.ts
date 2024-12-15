@@ -19,12 +19,14 @@ interface CommunityAgentsState {
   error: string | null;
   fetchUrl: string;
   confirmationDialog: DialogData<CommunityAgent>;
+  showDetails: boolean;
 
   openDialog: () => void;
   closeDialog: () => void;
   setSelectedAgent: (agent: CommunityAgent | null) => void;
   setFetchUrl: (url: string) => void;
   setConfirmationDialog: (data: DialogData<CommunityAgent>) => void;
+  setShowDetails: (show: boolean) => void;
 
   createAgent: (data: CommunityAgentRequestBody) => Promise<void>;
   updateAgent: (id: number, data: CommunityAgentRequestBody) => Promise<void>;
@@ -37,6 +39,7 @@ export const useCommunityAgents = create<CommunityAgentsState>((set, get) => ({
   isLoading: false,
   error: null,
   fetchUrl: "",
+  showDetails: false,
   confirmationDialog: {
     open: false,
     data: null,
@@ -106,6 +109,7 @@ export const useCommunityAgents = create<CommunityAgentsState>((set, get) => ({
   },
   setFetchUrl: (url) => set({ fetchUrl: url }),
   setConfirmationDialog: (data) => set({ confirmationDialog: data }),
+  setShowDetails: (show) => set({ showDetails: show }),
 }));
 
 export const selectSelectedAgent = (state: CommunityAgentsState) =>

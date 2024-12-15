@@ -6,6 +6,7 @@ import { Alert } from "@/types/alerts";
 import { AlertActionsCell } from "./alert-action-cell";
 import { Checkbox } from "../ui/checkbox";
 import { cn } from "@/lib/utils";
+import { CopyButton } from "../copy-button";
 
 const statusConfig = {
   ACTIVE: {
@@ -46,8 +47,22 @@ export const columns: ColumnDef<Alert>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "id",
+    accessorKey: "identifier",
     header: "ID",
+    cell: ({ row }) => {
+      return (
+        <div>
+          <span className="text-sm font-medium">
+            {row.getValue("identifier")}
+          </span>
+          <CopyButton
+            value={row.getValue("identifier")}
+            tooltip="Copy Identifier"
+          />
+        </div>
+      );
+    },
+    // size: 220,
   },
   {
     accessorKey: "created_at",

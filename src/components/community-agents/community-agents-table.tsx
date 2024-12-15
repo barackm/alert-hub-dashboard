@@ -43,7 +43,7 @@ const CommunityAgentsTable = () => {
     enableSorting: true,
     enableFiltering: true,
     searchColumn: "id",
-    searchPlaceholder: "Search members...",
+    searchPlaceholder: "Search by name or phone...",
     facetedFilters: [
       {
         column: "status",

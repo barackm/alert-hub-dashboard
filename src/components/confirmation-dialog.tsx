@@ -49,7 +49,6 @@ export function ConfirmationDialog<T>({
     }
   };
 
-  console.log("ConfirmationDialog");
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>

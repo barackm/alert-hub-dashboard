@@ -9,18 +9,8 @@ type Props = {
 const UserActionsCell = ({ row }: Props) => {
   const actions = [
     {
-      label: "View Details",
-      onClick: () => null,
-    },
-    {
       label: "Edit User",
       onClick: (user: User) => console.log("Edit", user),
-    },
-    {
-      label: "Delete User",
-      onClick: (user: User) => console.log("Delete", user),
-      shortcut: "⌘⌫",
-      separator: true,
     },
   ];
 

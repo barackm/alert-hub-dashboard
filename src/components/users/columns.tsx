@@ -1,7 +1,6 @@
 import { User, UserStatus } from "@/types/users";
 import { ColumnDef } from "@tanstack/react-table";
 import UserActionsCell from "./user-action-cell";
-import { Checkbox } from "../ui/checkbox";
 import { format } from "date-fns";
 import { Badge } from "../ui/badge";
 import { cn } from "@/lib/utils";
@@ -29,30 +28,20 @@ const statusConfig: Record<
 
 export const columns: ColumnDef<User>[] = [
   {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
     accessorKey: "id",
     header: "ID",
+    cell: ({ row }) => {
+      const first3 = row.original.id.slice(0, 3);
+      const last3 = row.original.id.slice(-3);
+
+      return (
+        <span className="text-sm font-medium">
+          {first3}
+          <span className="text-muted-foreground">...</span>
+          {last3}
+        </span>
+      );
+    },
   },
   {
     accessorKey: "created_at",

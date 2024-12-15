@@ -10,6 +10,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 export function NavMain({
   items,
@@ -37,7 +38,12 @@ export function NavMain({
           >
             <SidebarMenuItem>
               <Link href={item.url}>
-                <SidebarMenuButton tooltip={item.title}>
+                <SidebarMenuButton
+                  tooltip={item.title}
+                  className={cn("group", {
+                    "bg-primary/10 hover:bg-primary/10": item.isActive,
+                  })}
+                >
                   {item.icon && <item.icon />}
                   <span>{item.title}</span>
                   {(item.items?.length || 0) > 0 && (

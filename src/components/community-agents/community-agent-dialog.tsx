@@ -55,7 +55,6 @@ export function CommunityAgentDialog() {
   useEffect(() => {
     const currentValues = form.getValues();
     const locationData = parseLocation(selectedAgent?.location);
-    console.log({ locationData, selectedAgent });
 
     const newValues = selectedAgent
       ? {

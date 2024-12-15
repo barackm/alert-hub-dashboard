@@ -63,7 +63,6 @@ export function RegisterForm() {
       await refreshUser();
       toast.success("Welcome!");
     } catch (error: any) {
-      console.error(error);
       toast.error(error.message);
     } finally {
       setIsLoading(false);

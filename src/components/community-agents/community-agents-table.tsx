@@ -11,16 +11,26 @@ import { useCommunityAgents } from "@/hooks/use-community-agents";
 import { isEqual } from "lodash";
 import { Button } from "../ui/button";
 import { PlusIcon } from "lucide-react";
+import { FetchResponse } from "@/types/fetch";
+import { useSearchParams } from "next/navigation";
 
 const CommunityAgentsTable = () => {
-  const url = "/community-agents";
-  const { data, isLoading } = useSWR<CommunityAgent[]>(url, () =>
-    fetchCommunityAgents()
+  const searchParams = useSearchParams();
+  const page = searchParams.get("page") || 1;
+  const limit = searchParams.get("limit") || 10;
+
+  const url = `/community-agents?page=${page}&limit=${limit}`;
+
+  const { data, isLoading } = useSWR<FetchResponse<CommunityAgent>>(url, () =>
+    fetchCommunityAgents({
+      page: Number(page),
+      limit: Number(limit),
+    })
   );
   const setFetchUrl = useCommunityAgents((state) => state.setFetchUrl);
   const openDialog = useCommunityAgents((state) => state.openDialog);
   const fetchUrl = useCommunityAgents((state) => state.fetchUrl);
-  const communityAgents = React.useMemo(() => data || [], [data]);
+  const { total = 0, data: communityAgents } = data || { data: [] };
 
   useEffect(() => {
     if (url && !isEqual(fetchUrl, url)) {
@@ -59,6 +69,7 @@ const CommunityAgentsTable = () => {
         </Button>
       </>
     ),
+    total,
   };
 
   return (

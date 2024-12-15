@@ -53,7 +53,6 @@ export function LoginForm() {
       toast.success("Welcome back!");
     } catch (error: any) {
       toast.error(error.message);
-      console.log(error);
     } finally {
       setIsLoading(false);
     }

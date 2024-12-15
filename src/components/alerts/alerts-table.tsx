@@ -13,7 +13,7 @@ export default function AlertsTable() {
   const limit = searchParams.get("limit") || 10;
 
   const url = `/alerts?page=${page}&limit=${limit}`;
-  const { data, isLoading } = useSWR<FetchResponse<Alert[]>>(url, () =>
+  const { data, isLoading } = useSWR<FetchResponse<Alert>>(url, () =>
     getAlerts({ page: Number(page), limit: Number(limit) })
   );
 
@@ -52,7 +52,7 @@ export default function AlertsTable() {
 
   return (
     <div className="container mx-auto">
-      <DataTable columns={columns} data={alerts as Alert[]} config={config} />
+      <DataTable columns={columns} data={alerts} config={config} />
     </div>
   );
 }

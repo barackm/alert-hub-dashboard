@@ -39,7 +39,6 @@ const CommunityAgentActionCell = (props: Props) => {
     {
       label: "Edit Member",
       onClick: (row) => {
-        console.log("Edit", row);
         setSelectedAgent(row as CommunityAgent);
         openDialog();
       },

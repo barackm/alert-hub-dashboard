@@ -1,18 +1,54 @@
 "use server";
 
 import { createClient } from "@/utils/supabase/server";
-import { CommunityAgentRequestBody } from "@/types/community-agents";
+import {
+  CommunityAgent,
+  CommunityAgentRequestBody,
+} from "@/types/community-agents";
 import { revalidatePath } from "next/cache";
+import { FetchRequestParams, FetchResponse } from "@/types/fetch";
 
-export const fetchCommunityAgents = async () => {
+interface FetchCommunityAgentsConfig extends FetchRequestParams {
+  province?: string;
+  district?: string;
+  sector?: string;
+  cell?: string;
+  village?: string;
+}
+
+export const fetchCommunityAgents = async (
+  config?: FetchCommunityAgentsConfig
+): Promise<FetchResponse<CommunityAgent>> => {
+  const {
+    limit = 10,
+    page = 1,
+    province,
+    district,
+    sector,
+    cell,
+    village,
+  } = config || {};
+  const offset = (page - 1) * limit;
+
   const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("community_agents")
-    .select("*")
+  let query = supabase.from("community_agents").select("*", { count: "exact" });
+
+  if (province) query = query.eq("province", province);
+  if (district) query = query.eq("district", district);
+  if (sector) query = query.eq("sector", sector);
+  if (cell) query = query.eq("cell", cell);
+  if (village) query = query.eq("village", village);
+
+  const { data, error, count } = await query
+    .range(offset, offset + limit - 1)
     .order("created_at", { ascending: false });
 
   if (error) throw new Error(error.message);
-  return data;
+
+  return {
+    data: data || [],
+    total: count || 0,
+  };
 };
 
 export const createCommunityAgent = async (data: CommunityAgentRequestBody) => {

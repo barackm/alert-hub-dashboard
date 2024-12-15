@@ -7,14 +7,25 @@ import useSWR from "swr";
 import { fetchUsers } from "./actions";
 import { isEqual } from "lodash";
 import { useUsers } from "@/hooks/use-users";
+import { useSearchParams } from "next/navigation";
+import { FetchResponse } from "@/types/fetch";
 
 const UsersTable = () => {
-  const url = "/users";
-  const { data, isLoading } = useSWR<User[]>(url, () => fetchUsers());
+  const searchParams = useSearchParams();
+  const page = searchParams.get("page") || 1;
+  const limit = searchParams.get("limit") || 10;
 
+  const url = `/users?page=${page}&limit=${limit}`;
+  const { data, isLoading } = useSWR<FetchResponse<User>>(url, () =>
+    fetchUsers({
+      page: Number(page),
+      limit: Number(limit),
+    })
+  );
+
+  const { data: users, total = 0 } = data || { data: [] };
   const setFetchUrl = useUsers((state) => state.setFetchUrl);
   const fetchUrl = useUsers((state) => state.fetchUrl);
-  const users = React.useMemo(() => data || [], [data]);
 
   useEffect(() => {
     if (url && !isEqual(fetchUrl, url)) {
@@ -40,6 +51,7 @@ const UsersTable = () => {
     ],
     showToolbar: true,
     isLoading,
+    total,
   };
 
   return (

@@ -11,7 +11,7 @@ interface FetchAlertConfig extends FetchRequestParams {
 
 export const getAlerts = async (
   config?: FetchAlertConfig
-): Promise<FetchResponse<Alert[]>> => {
+): Promise<FetchResponse<Alert>> => {
   const { limit = 10, page = 1, village, status } = config || {};
   const offset = (page - 1) * limit;
 

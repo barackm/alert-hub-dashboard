@@ -2,7 +2,6 @@
 
 import { TrendingUp } from "lucide-react";
 import { CartesianGrid, Line, LineChart, XAxis } from "recharts";
-
 import {
   Card,
   CardContent,
@@ -17,43 +16,84 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-
-const chartData = [
-  { month: "January", death: 186, pandemic: 80, disease: 20 },
-  { month: "February", death: 305, pandemic: 200, disease: 10 },
-  { month: "March", death: 237, pandemic: 120, disease: 30 },
-  { month: "April", death: 73, pandemic: 190, disease: 40 },
-  { month: "May", death: 209, pandemic: 130, disease: 50 },
-  { month: "June", death: 214, pandemic: 140, disease: 60 },
-];
+import { getDefaultDateRange, parseDateFromUrl } from "@/utils/date";
+import { useSearchParams } from "next/navigation";
+import useSWR from "swr";
+import { useMemo } from "react";
+import { getAlertsStats } from "./actions";
+import { IncidentType } from "@/types/alerts";
 
 const chartConfig = {
-  death: {
-    label: "Death",
+  [IncidentType.HumanDisease]: {
     color: "hsl(var(--chart-1))",
-  },
-  pandemic: {
-    label: "Pandemic",
-    color: "hsl(var(--chart-2))",
-  },
-  disease: {
     label: "Human Disease",
+  },
+  [IncidentType.Death]: {
+    color: "hsl(var(--chart-2))",
+    label: "Human Death",
+  },
+  [IncidentType.Pandemic]: {
     color: "hsl(var(--chart-3))",
+    label: "Pandemic",
+  },
+  [IncidentType.AnimalDiseaseDeath]: {
+    color: "hsl(var(--chart-4))",
+    label: "Animal Disease/Death",
+  },
+  [IncidentType.EbolaLikeSymptoms]: {
+    color: "hsl(var(--chart-5))",
+    label: "Ebola-like Symptoms",
+  },
+  [IncidentType.DogBites]: {
+    color: "hsl(var(--chart-6))",
+    label: "Dog Bites",
   },
 } satisfies ChartConfig;
 
 export function Overview() {
+  const searchParams = useSearchParams();
+  const from = searchParams.get("from");
+  const to = searchParams.get("to");
+
+  const dateRange = useMemo(
+    () =>
+      from && to
+        ? {
+            from: parseDateFromUrl(from),
+            to: parseDateFromUrl(to),
+          }
+        : getDefaultDateRange(),
+    [from, to]
+  );
+
+  const url = useMemo(
+    () =>
+      !dateRange?.from || !dateRange?.to
+        ? null
+        : `/api/dashboard/alerts?from=${dateRange.from.toISOString()}&to=${dateRange.to.toISOString()}`,
+    [dateRange]
+  );
+
+  const { data } = useSWR(url, () =>
+    getAlertsStats(dateRange.from!, dateRange.to!)
+  );
+
+  const { current = [], previous = [], trends = [] } = data || {};
+
   return (
     <Card className="lg:col-span-4">
       <CardHeader>
         <CardTitle>Total Alerts</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+        <CardDescription>
+          {dateRange?.from?.toLocaleDateString() || "From"} -{" "}
+          {dateRange?.to?.toLocaleDateString() || "To"}
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
           <LineChart
             accessibilityLayer
-            data={chartData}
+            data={trends}
             margin={{
               left: 12,
               right: 12,
@@ -69,25 +109,52 @@ export function Overview() {
             />
             <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
             <Line
-              dataKey="death"
+              dataKey={IncidentType.HumanDisease.toLowerCase()}
               type="monotone"
               stroke="hsl(var(--chart-1))"
               strokeWidth={2}
               dot={false}
+              label="Human Disease"
             />
             <Line
-              dataKey="pandemic"
+              dataKey={IncidentType.Death.toLowerCase()}
               type="monotone"
               stroke="hsl(var(--chart-2))"
               strokeWidth={2}
               dot={false}
+              label="Human Death"
             />
             <Line
-              dataKey="disease"
+              dataKey={IncidentType.Pandemic.toLowerCase()}
               type="monotone"
               stroke="hsl(var(--chart-3))"
               strokeWidth={2}
               dot={false}
+              label="Pandemic"
+            />
+            <Line
+              dataKey={IncidentType.AnimalDiseaseDeath.toLowerCase()}
+              type="monotone"
+              stroke="hsl(var(--chart-4))"
+              strokeWidth={2}
+              dot={false}
+              label="Animal Disease/Death"
+            />
+            <Line
+              dataKey={IncidentType.EbolaLikeSymptoms.toLowerCase()}
+              type="monotone"
+              stroke="hsl(var(--chart-5))"
+              strokeWidth={2}
+              dot={false}
+              label="Ebola-like Symptoms"
+            />
+            <Line
+              dataKey={IncidentType.DogBites.toLowerCase()}
+              type="monotone"
+              stroke="hsl(var(--chart-6))"
+              strokeWidth={2}
+              dot={false}
+              label="Dog Bites"
             />
           </LineChart>
         </ChartContainer>
@@ -96,11 +163,12 @@ export function Overview() {
         <div className="flex w-full items-start gap-2 text-sm">
           <div className="grid gap-2">
             <div className="flex items-center gap-2 font-medium leading-none">
-              +0.10% from last month
+              {calculatePercentageChange(current.length, previous.length)}
+              % from last month
               <TrendingUp className="h-4 w-4" />
             </div>
             <div className="flex items-center gap-2 leading-none text-muted-foreground">
-              <span>3,234</span>
+              <span>{current.length}</span>
               <span>total alerts</span>
             </div>
           </div>
@@ -108,4 +176,10 @@ export function Overview() {
       </CardFooter>
     </Card>
   );
+}
+
+function calculatePercentageChange(current: number, previous: number): string {
+  if (previous === 0) return "+100.00";
+  const change = ((current - previous) / previous) * 100;
+  return change > 0 ? `+${change.toFixed(2)}` : change.toFixed(2);
 }

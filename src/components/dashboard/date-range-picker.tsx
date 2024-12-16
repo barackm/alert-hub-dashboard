@@ -1,10 +1,7 @@
 "use client";
 
-import * as React from "react";
-import { addDays, format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
-import { DateRange } from "react-day-picker";
-
+import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -13,28 +10,65 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { isEqual } from "lodash";
+import { DateRange } from "react-day-picker";
+import {
+  formatDateForUrl,
+  getDefaultDateRange,
+  parseDateFromUrl,
+} from "@/utils/date";
 
-export function CalendarDateRangePicker({
-  className,
-}: React.HTMLAttributes<HTMLDivElement>) {
-  const [date, setDate] = React.useState<DateRange | undefined>({
-    from: new Date(2023, 0, 20),
-    to: addDays(new Date(2023, 0, 20), 20),
-  });
+export function CalendarDateRangePicker() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  const from = searchParams.get("from");
+  const to = searchParams.get("to");
+  const dateRange =
+    from && to
+      ? {
+          from: parseDateFromUrl(from),
+          to: parseDateFromUrl(to),
+        }
+      : undefined;
+
+  const [date, setDate] = useState<DateRange | undefined>(
+    dateRange || getDefaultDateRange()
+  );
+
+  useEffect(() => {
+    if (!date?.from || !date?.to) return;
+    if (isEqual(date, dateRange)) return;
+    if (dateRange) {
+      setDate(dateRange);
+    }
+  }, [dateRange, setDate]);
+
+  const handleSelect = (newDate: DateRange | undefined) => {
+    setDate(newDate);
+    if (!newDate?.from || !newDate?.to) return;
+
+    const params = new URLSearchParams(searchParams);
+    params.set("from", formatDateForUrl(newDate.from));
+    params.set("to", formatDateForUrl(newDate.to));
+    router.push(`?${params.toString()}`, { scroll: false });
+  };
 
   return (
-    <div className={cn("grid gap-2", className)}>
+    <div className="grid gap-2">
       <Popover>
         <PopoverTrigger asChild>
           <Button
             id="date"
             variant={"outline"}
             className={cn(
-              "w-[260px] justify-start text-left font-normal",
+              "w-[300px] justify-start text-left font-normal",
               !date && "text-muted-foreground"
             )}
           >
-            <CalendarIcon className="mr-2 h-4 w-4" />
+            <CalendarIcon />
             {date?.from ? (
               date.to ? (
                 <>
@@ -49,13 +83,13 @@ export function CalendarDateRangePicker({
             )}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-auto p-0" align="end">
+        <PopoverContent className="w-auto p-0" align="start">
           <Calendar
             initialFocus
             mode="range"
             defaultMonth={date?.from}
             selected={date}
-            onSelect={setDate}
+            onSelect={handleSelect}
             numberOfMonths={2}
           />
         </PopoverContent>

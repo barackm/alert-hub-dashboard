@@ -1,7 +1,7 @@
 export type Alert = {
   id: number;
   created_at: string;
-  incident_type: string;
+  incident_type: IncidentType;
   province: string;
   district: string;
   sector: string;
@@ -21,4 +21,13 @@ export enum AlertStatus {
   IMPROVED = "IMPROVED",
   WORSENED = "WORSENED",
   CONTAINED = "CONTAINED",
+}
+
+export enum IncidentType {
+  HumanDisease = "Human Disease",
+  Death = "Human Death",
+  Pandemic = "Pandemic",
+  AnimalDiseaseDeath = "Animal Disease/Death",
+  EbolaLikeSymptoms = "Ebola-like Symptoms",
+  DogBites = "Dog Bites",
 }

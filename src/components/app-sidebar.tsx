@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Gauge, ShieldAlertIcon, Users } from "lucide-react";
+import { Gauge, HospitalIcon, ShieldAlertIcon, Users } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
 import { NavUser } from "@/components/nav-user";
@@ -44,6 +44,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           url: "/community-agents",
           icon: Users,
           isActive: pathname.startsWith("/community-agents"),
+        },
+        {
+          title: "Health Facilities",
+          url: "/health-facilities",
+          icon: HospitalIcon,
+          isActive: pathname.startsWith("/health-facilities"),
         },
       ],
     }),

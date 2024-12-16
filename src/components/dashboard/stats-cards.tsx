@@ -3,6 +3,10 @@
 import { ShieldAlert, Users, UserCheck, Activity } from "lucide-react";
 import { StatsCard } from "./stats-card";
 import { useDashboard } from "@/hooks/use-dashboard";
+import { useMemo } from "react";
+import { useSearchParams } from "next/navigation";
+import { getDefaultDateRange, parseDateFromUrl } from "@/utils/date";
+import useSWR from "swr";
 
 function calculatePercentageChange(current: number, previous: number): string {
   if (previous === 0) return "+100.00";
@@ -11,7 +15,39 @@ function calculatePercentageChange(current: number, previous: number): string {
 }
 
 export function StatsCards() {
-  const { stats } = useDashboard();
+  const stats = useDashboard((state) => state.stats);
+  const fetchCommunityStats = useDashboard(
+    (state) => state.fetchCommunityStats
+  );
+  const fetchUserStats = useDashboard((state) => state.fetchUserStats);
+  const fetchFacilityStats = useDashboard((state) => state.fetchFacilityStats);
+
+  const searchParams = useSearchParams();
+  const from = searchParams.get("from");
+  const to = searchParams.get("to");
+
+  const dateRange = useMemo(
+    () =>
+      from && to
+        ? {
+            from: parseDateFromUrl(from),
+            to: parseDateFromUrl(to),
+          }
+        : getDefaultDateRange(),
+    [from, to]
+  );
+
+  const url = useMemo(
+    () =>
+      !dateRange?.from || !dateRange?.to
+        ? null
+        : `/api/dashboard/stats?from=${dateRange.from.toISOString()}&to=${dateRange.to.toISOString()}`,
+    [dateRange]
+  );
+
+  useSWR(url, fetchCommunityStats);
+  useSWR(url, fetchUserStats);
+  useSWR(url, fetchFacilityStats);
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">

@@ -74,6 +74,7 @@ export const useDashboard = create<DashboardState>((set) => ({
       const alertsStats = await getAlertsStats(from, to);
       set((state) => ({
         stats: { ...state.stats, totalAlerts: alertsStats.current.length },
+        trends: alertsStats.trends,
         loading: { ...state.loading, alerts: false },
       }));
     } catch (error: any) {

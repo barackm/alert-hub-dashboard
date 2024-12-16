@@ -20,8 +20,8 @@ import { getDefaultDateRange, parseDateFromUrl } from "@/utils/date";
 import { useSearchParams } from "next/navigation";
 import useSWR from "swr";
 import { useMemo } from "react";
-import { getAlertsStats } from "./actions";
 import { IncidentType } from "@/types/alerts";
+import { useDashboard } from "@/hooks/use-dashboard";
 
 const chartConfig = {
   [IncidentType.HumanDisease]: {
@@ -51,6 +51,7 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function Overview() {
+  const { fetchAlertsStats, stats, trends = [] } = useDashboard();
   const searchParams = useSearchParams();
   const from = searchParams.get("from");
   const to = searchParams.get("to");
@@ -74,11 +75,7 @@ export function Overview() {
     [dateRange]
   );
 
-  const { data } = useSWR(url, () =>
-    getAlertsStats(dateRange.from!, dateRange.to!)
-  );
-
-  const { current = [], previous = [], trends = [] } = data || {};
+  useSWR(url, () => fetchAlertsStats(dateRange));
 
   return (
     <Card className="lg:col-span-4">
@@ -163,12 +160,15 @@ export function Overview() {
         <div className="flex w-full items-start gap-2 text-sm">
           <div className="grid gap-2">
             <div className="flex items-center gap-2 font-medium leading-none">
-              {calculatePercentageChange(current.length, previous.length)}
+              {calculatePercentageChange(
+                stats.newCases,
+                stats.previousMonthStats?.newCases
+              )}
               % from last month
               <TrendingUp className="h-4 w-4" />
             </div>
             <div className="flex items-center gap-2 leading-none text-muted-foreground">
-              <span>{current.length}</span>
+              <span>{stats.totalAlerts}</span>
               <span>total alerts</span>
             </div>
           </div>

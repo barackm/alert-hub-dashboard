@@ -29,6 +29,10 @@ const statusConfig = {
     variant: "outline",
     className: "bg-yellow-100 text-yellow-800 hover:bg-yellow-200",
   },
+  [AlertStatus.EXAMINATION_CONTINUES]: {
+    variant: "outline",
+    className: "bg-gray-100 text-gray-800 hover:bg-gray-200",
+  },
 } as const;
 
 export const columns: ColumnDef<Alert>[] = [

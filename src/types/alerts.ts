@@ -21,6 +21,7 @@ export enum AlertStatus {
   IMPROVED = "IMPROVED",
   WORSENED = "WORSENED",
   CONTAINED = "CONTAINED",
+  EXAMINATION_CONTINUES = "EXAMINATION_CONTINUES",
 }
 
 export enum IncidentType {

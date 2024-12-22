@@ -20,6 +20,14 @@ interface CommunityAgentsState {
   fetchUrl: string;
   confirmationDialog: DialogData<CommunityAgent>;
   showDetails: boolean;
+  detailsDialog: {
+    open: boolean;
+    data: Record<string, any>;
+  };
+  setDetailsDialog: (data: {
+    open: boolean;
+    data: Record<string, any>;
+  }) => void;
 
   openDialog: () => void;
   closeDialog: () => void;
@@ -48,7 +56,11 @@ export const useCommunityAgents = create<CommunityAgentsState>((set, get) => ({
     variant: "default",
     action: DialogAction.CREATE,
   },
-
+  detailsDialog: {
+    open: false,
+    data: {},
+  },
+  setDetailsDialog: (dialog) => set({ detailsDialog: dialog }),
   openDialog: () => set({ isDialogOpen: true }),
   closeDialog: () => {
     set({ isDialogOpen: false, selectedAgent: null });

@@ -28,6 +28,7 @@ const CommunityAgentActionCell = (props: Props) => {
     (state) => state.setConfirmationDialog
   );
 
+  const deleteAgent = useCommunityAgents((state) => state.deleteAgent);
   const [showDetails, setShowDetails] = React.useState(false);
   const openDialog = useCommunityAgents((state) => state.openDialog);
 
@@ -71,7 +72,9 @@ const CommunityAgentActionCell = (props: Props) => {
       />
       <ConfirmationDialog<CommunityAgent>
         description={confirmationDialog.description}
-        onConfirm={() => Promise.resolve()}
+        onConfirm={async () => {
+          await deleteAgent(confirmationDialog.data?.id as number);
+        }}
         open={confirmationDialog.open}
         title={confirmationDialog.title}
         onOpenChange={() =>

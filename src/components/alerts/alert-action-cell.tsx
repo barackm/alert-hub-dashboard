@@ -18,16 +18,6 @@ export function AlertActionsCell({ row }: AlertActionsCellProps) {
       label: "View Details",
       onClick: () => setShowDetails(true),
     },
-    {
-      label: "Edit Alert",
-      onClick: (alert: Alert) => console.log("Edit", alert),
-    },
-    {
-      label: "Delete Alert",
-      onClick: (alert: Alert) => console.log("Delete", alert),
-      shortcut: "⌘⌫",
-      separator: true,
-    },
   ];
 
   const data = safeJsonParse(row.original.details) || {};

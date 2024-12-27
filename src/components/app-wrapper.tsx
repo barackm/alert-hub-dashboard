@@ -11,7 +11,7 @@ import AuthProvider from "./auth/auth-provider";
 const AppWrapper = (props: PropsWithChildren) => {
   const [mounted, setMounted] = React.useState(false);
   const pathname = usePathname();
-  const unauthenticatedPaths = ["/login", "/register"];
+  const unauthenticatedPaths = ["/login", "/register", "/account-pending"];
   const shouldShowSidebar = !unauthenticatedPaths.includes(pathname);
 
   React.useEffect(() => {

@@ -1,3 +1,4 @@
+import { UserStatus } from "@/types/users";
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
@@ -41,6 +42,22 @@ export async function updateSession(request: NextRequest) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     return NextResponse.redirect(url);
+  }
+
+  const { data: userData, error } = await supabase
+    .from("profile")
+    .select("status")
+    .eq("id", user?.id)
+    .single();
+  if (error) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/login";
+    return NextResponse.redirect(url);
+  }
+
+  if (userData.status === UserStatus.PENDING) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/account-pending";
   }
 
   return supabaseResponse;

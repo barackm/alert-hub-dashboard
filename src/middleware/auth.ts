@@ -62,24 +62,34 @@ export async function authMiddleware(request: NextRequest) {
     return NextResponse.redirect(url);
   };
 
-  const isPublicRoute =
-    request.nextUrl.pathname.startsWith("/login") ||
-    request.nextUrl.pathname.startsWith("/register") ||
-    request.nextUrl.pathname.startsWith("/account-pending");
-
-  if (isPublicRoute) {
-    return supabaseResponse;
-  }
+  const isAuthRoute =
+    request.nextUrl.pathname === LOGIN_ROUTE ||
+    request.nextUrl.pathname === REGISTER_ROUTE;
 
   if (!user) {
-    return handleRedirect("/login");
-  }
-
-  if (user.status === UserStatus.PENDING) {
-    if (request.nextUrl.pathname !== "/account-pending") {
-      return handleRedirect("/account-pending");
+    if (!isAuthRoute) {
+      return handleRedirect(LOGIN_ROUTE);
     }
     return supabaseResponse;
+  }
+
+  if (
+    user.status === UserStatus.PENDING ||
+    user.status === UserStatus.INACTIVE ||
+    !user.status
+  ) {
+    if (request.nextUrl.pathname !== ACCOUNT_PENDING_ROUTE) {
+      return handleRedirect(ACCOUNT_PENDING_ROUTE);
+    }
+    return supabaseResponse;
+  }
+
+  if (request.nextUrl.pathname === ACCOUNT_PENDING_ROUTE) {
+    return handleRedirect(HOME_ROUTE);
+  }
+
+  if (isAuthRoute) {
+    return handleRedirect(HOME_ROUTE);
   }
 
   return supabaseResponse;

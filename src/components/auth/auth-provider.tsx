@@ -8,6 +8,9 @@ import React, {
 import { getCurrentUser } from "./actions";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import { usePathname } from "next/navigation";
+
+const publicRoutes = ["/login", "/register", "/about"];
 
 type AuthContextType = {
   refreshUser: () => Promise<void>;
@@ -28,6 +31,7 @@ export const useAuth = () => {
 const AuthProvider = (props: PropsWithChildren) => {
   const [loading, setLoading] = useState(true);
   const { setUser: setStoreUser } = useAuthStore();
+  const pathname = usePathname();
 
   const getUser = useCallback(async () => {
     try {
@@ -46,8 +50,12 @@ const AuthProvider = (props: PropsWithChildren) => {
   }, [getUser]);
 
   useEffect(() => {
+    if (publicRoutes.includes(pathname)) {
+      setLoading(false);
+      return;
+    }
     getUser();
-  }, [getUser]);
+  }, [getUser, pathname]);
 
   if (loading)
     return (
